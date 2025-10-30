@@ -54,45 +54,46 @@
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 24px;
+      padding: 16px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      animation: slideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: flex-start;
+      animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       width: 100%;
       height: 100%;
-      gap: 14px;
+      gap: 16px;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    @keyframes slideDown {
+    @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateX(20px);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
-    /* Top section: Avatar and caller status */
+    /* Avatar section - now on the left */
     .avatar-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      margin-top: 8px;
+      justify-content: center;
+      gap: 0;
+      flex-shrink: 0;
     }
 
     .avatar-container {
       position: relative;
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
+      width: 140px;
+      height: 140px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.1);
       border: 2px solid rgba(255, 255, 255, 0.15);
       animation: avatarGlow 3s ease-in-out infinite;
     }
@@ -112,33 +113,42 @@
       }
     }
 
+    /* Right content section */
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
     /* Caller info section */
     .caller-info {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 6px;
+      align-items: flex-start;
+      gap: 4px;
     }
 
     .caller-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #f7fafc;
-      text-align: center;
+      text-align: left;
     }
 
     .caller-number {
-      font-size: 13px;
+      font-size: 12px;
       color: #cbd5e0;
-      text-align: center;
+      text-align: left;
     }
 
     /* Call status and duration */
     .call-status-wrapper {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
+      gap: 6px;
+      padding: 4px 8px;
       background: rgba(100, 150, 200, 0.12);
       border-radius: 6px;
       border: 1px solid rgba(100, 150, 200, 0.2);
@@ -164,29 +174,27 @@
     }
 
     .call-status-text {
-      font-size: 12px;
+      font-size: 11px;
       color: #cbd5e0;
       font-weight: 500;
     }
 
     .call-duration {
-      font-size: 11px;
+      font-size: 10px;
       color: #94a3b8;
       font-weight: 600;
-      margin-left: 4px;
+      margin-left: 2px;
     }
 
     /* Quality indicator */
     .quality-indicator {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      background: rgba(75, 192, 192, 0.15);
+      gap: 6px;
+      padding: 4px 8px;
+      background: rgba(75, 192, 192, 0.12);
       border-radius: 6px;
-      font-size: 11px;
-      color: #4bc0c0;
-      font-weight: 500;
+      border: 1px solid rgba(75, 192, 192, 0.2);
     }
 
     .quality-bars {
@@ -195,31 +203,32 @@
     }
 
     .quality-bar {
-      width: 3px;
-      height: 8px;
+      width: 2px;
+      height: 9px;
       background: #4bc0c0;
       border-radius: 1px;
     }
 
     .quality-bar.low {
-      height: 4px;
-      opacity: 0.5;
+      height: 5px;
+      opacity: 0.6;
     }
 
     /* Action buttons section */
     .action-buttons {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
       width: 100%;
+      margin-top: 8px;
     }
 
     button {
-      padding: 10px 16px;
+      padding: 6px 10px;
       border: none;
-      border-radius: 10px;
-      font-size: 13px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -228,61 +237,69 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 3px;
+      flex: 1;
+      min-width: 60px;
     }
 
-    .btn-voice {
+    .btn-answer {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-answer:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-answer:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-share {
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
     }
 
-    .btn-voice:hover {
+    .btn-share:hover {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
-    .btn-voice:active {
+    .btn-share:active {
       transform: translateY(0);
       box-shadow: 0 1px 4px rgba(59, 130, 246, 0.25);
     }
 
-    .btn-video {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
-    }
-
-    .btn-video:hover {
-      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-video:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 4px rgba(99, 102, 241, 0.25);
-    }
-
-    .btn-message {
+    .btn-webcam {
       background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
       box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
     }
 
-    .btn-message:hover {
+    .btn-webcam:hover {
       background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
     }
 
-    .btn-message:active {
+    .btn-webcam:active {
       transform: translateY(0);
       box-shadow: 0 1px 4px rgba(139, 92, 246, 0.25);
+    }
+
+    .btn-webcam.active {
+      background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+      border: 1px solid rgba(139, 92, 246, 0.5);
     }
 
     .btn-decline {
       background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
-      flex-basis: 100%;
     }
 
     .btn-decline:hover {
@@ -304,51 +321,56 @@
 </head>
 <body>
   <div class="notification-card">
-    <!-- Avatar section -->
+    <!-- Avatar section - left side -->
     <div class="avatar-section">
       <div class="avatar-container">
         <img src="avatar.png" alt="Caller Avatar">
       </div>
     </div>
 
-    <!-- Caller info -->
-    <div class="caller-info">
-      <div class="caller-name">Jean Brito</div>
-      <div class="caller-number">+55 11 98765-4321</div>
-    </div>
-
-    <!-- Call status -->
-    <div class="call-status-wrapper">
-      <div class="status-indicator"></div>
-      <span class="call-status-text">Incoming Call</span>
-      <span class="call-duration" id="duration">0:00</span>
-    </div>
-
-    <!-- Quality indicator -->
-    <div class="quality-indicator">
-      <span>Connection Quality:</span>
-      <div class="quality-bars">
-        <div class="quality-bar"></div>
-        <div class="quality-bar"></div>
-        <div class="quality-bar"></div>
-        <div class="quality-bar low"></div>
+    <!-- Content section - right side -->
+    <div class="content-section">
+      <!-- Caller info -->
+      <div class="caller-info">
+        <div class="caller-name">Jean Brito</div>
+        <div class="caller-number">+55 11 98765-4321</div>
       </div>
-    </div>
 
-    <!-- Action buttons -->
-    <div class="action-buttons">
-      <button class="btn-voice" onclick="acceptVoiceCall()">
-        <span>☎</span> Accept
-      </button>
-      <button class="btn-video" onclick="acceptVideoCall()">
-        <span>📹</span> Video
-      </button>
-      <button class="btn-message" onclick="sendMessage()">
-        <span>✉</span> Message
-      </button>
-      <button class="btn-decline" onclick="declineCall()">
-        Decline
-      </button>
+      <!-- Call status and quality row -->
+      <div style="display: flex; gap: 10px; font-size: 11px;">
+        <!-- Call status -->
+        <div class="call-status-wrapper">
+          <div class="status-indicator"></div>
+          <span class="call-status-text" id="callStatus">Connected</span>
+          <span class="call-duration" id="duration">0:00</span>
+        </div>
+
+        <!-- Quality indicator -->
+        <div class="quality-indicator">
+          <div class="quality-bars">
+            <div class="quality-bar"></div>
+            <div class="quality-bar"></div>
+            <div class="quality-bar"></div>
+            <div class="quality-bar low"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button class="btn-answer" onclick="answerCall()">
+          <span>☎</span> Answer
+        </button>
+        <button class="btn-share" onclick="toggleScreenShare()">
+          <span>🖥</span> Share
+        </button>
+        <button class="btn-webcam" id="webcamBtn" onclick="toggleWebcam()">
+          <span>📹</span> Video
+        </button>
+        <button class="btn-decline" onclick="declineCall()">
+          <span>✕</span> End
+        </button>
+      </div>
     </div>
   </div>
 
@@ -364,25 +386,61 @@
       durationEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
     }, 1000);
 
-    function acceptVoiceCall() {
-      console.log('Accept Voice Call clicked (Advanced)');
-      clearInterval(durationInterval);
-      window.electronAPI.acceptCall();
+    // Call state
+    let callAnswered = false;
+    let webcamActive = false;
+    let screenSharing = false;
+    const webcamBtn = document.getElementById('webcamBtn');
+
+    function answerCall() {
+      console.log('Call answered (Advanced VoIP)');
+      callAnswered = true;
+      // In a real app, this would establish the call connection
+      // and switch to call view
     }
 
-    function acceptVideoCall() {
-      console.log('Accept Video Call clicked (Advanced)');
-      clearInterval(durationInterval);
-      window.electronAPI.acceptCall();
+    function toggleScreenShare() {
+      screenSharing = !screenSharing;
+      console.log(`Screen sharing ${screenSharing ? 'enabled' : 'disabled'}`);
+      // In a real app, this would:
+      // 1. Show screen selection dialog
+      // 2. Capture and stream the selected screen
+      // 3. Notify the other participant
+      if (screenSharing) {
+        console.log('Starting screen share...');
+        // openScreenShareUI();
+      } else {
+        console.log('Stopping screen share...');
+      }
     }
 
-    function sendMessage() {
-      console.log('Send Message clicked (Advanced)');
-      // Could implement message UI in future
+    function toggleWebcam() {
+      webcamActive = !webcamActive;
+      console.log(`Webcam ${webcamActive ? 'enabled' : 'disabled'}`);
+
+      // Update button appearance
+      if (webcamActive) {
+        webcamBtn.classList.add('active');
+      } else {
+        webcamBtn.classList.remove('active');
+      }
+
+      // In a real app, this would:
+      // 1. Request camera permissions
+      // 2. Open video stream from webcam
+      // 3. Display local preview
+      // 4. Send video to other participant
+      if (webcamActive) {
+        console.log('Activating webcam for video call...');
+        // startWebcamStream();
+      } else {
+        console.log('Deactivating webcam...');
+        // stopWebcamStream();
+      }
     }
 
     function declineCall() {
-      console.log('Decline Call clicked (Advanced)');
+      console.log('Call ended/declined (Advanced VoIP)');
       clearInterval(durationInterval);
       window.electronAPI.declineCall();
     }

@@ -10,8 +10,8 @@ let advancedNotificationWindow;
 // Create main window
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 500,
-    height: 300,
+    width: 520,
+    height: 500,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -219,8 +219,8 @@ function createAdvancedNotification() {
   }
 
   advancedNotificationWindow = new BrowserWindow({
-    width: 500,
-    height: 300,
+    width: 620,
+    height: 180,
     frame: false,        // Remove window frame
     transparent: true,   // Enable transparency
     alwaysOnTop: true,   // Always on top of other windows
@@ -238,10 +238,10 @@ function createAdvancedNotification() {
     }
   });
 
-  // Position at center-top of primary display
+  // Position at top-right of primary display
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
-  advancedNotificationWindow.setPosition(width / 2 - 250, 40);
+  advancedNotificationWindow.setPosition(width - 640, 20);
 
   /**
    * CRITICAL: Use ready-to-show event to wait for renderer initialization
