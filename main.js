@@ -266,20 +266,37 @@ function createAdvancedNotification() {
 
 // Show native macOS notification
 function showNativeNotification() {
-  const notification = new Notification({
+  // Select appropriate icon format for each platform
+  let iconPath;
+  if (process.platform === 'darwin') {
+    // macOS uses .icns format
+    iconPath = path.join(__dirname, 'icon.icns');
+  } else if (process.platform === 'win32') {
+    // Windows uses .ico format
+    iconPath = path.join(__dirname, 'icon.ico');
+  } else {
+    // Linux and others use .png format
+    iconPath = path.join(__dirname, 'icon.png');
+  }
+
+  // Notification options - actions are supported on all platforms (Windows, macOS, Linux)
+  const notificationOptions = {
     title: 'Incoming Call',
     body: 'John Doe',
-    icon: path.join(__dirname, 'icon.png'),
+    icon: iconPath,
     silent: false,
+    hasReply: false,
+    // Actions work on Windows, macOS, and Linux
     actions: [
       { type: 'button', text: 'Accept' },
       { type: 'button', text: 'Decline' }
-    ],
-    hasReply: false
-  });
+    ]
+  };
 
+  const notification = new Notification(notificationOptions);
   notification.show();
 
+  // Handle action button clicks (supported on Windows, macOS, and Linux)
   notification.on('action', (event, index) => {
     if (index === 0) {
       console.log('✓ Native notification: Call accepted');
@@ -288,6 +305,7 @@ function showNativeNotification() {
     }
   });
 
+  // Handle notification click (works on all platforms)
   notification.on('click', () => {
     console.log('Native notification clicked');
   });
