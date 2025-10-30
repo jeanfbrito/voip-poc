@@ -113,6 +113,21 @@ h1 {
   box-shadow: 0 4px 12px rgba(45, 55, 72, 0.4);
 }
 
+.button-compact {
+  background: linear-gradient(135deg, #4c51bf 0%, #5a67d8 100%);
+  box-shadow: 0 8px 20px rgba(76, 81, 191, 0.4);
+}
+
+.button-compact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(76, 81, 191, 0.6);
+}
+
+.button-compact:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(76, 81, 191, 0.4);
+}
+
 .button-icon {
   font-size: 16px;
 }

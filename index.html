@@ -24,6 +24,10 @@
         <span class="button-icon">🌙</span>
         Show Dark Notification
       </button>
+      <button id="compactBtn" class="button button-compact">
+        <span class="button-icon">📬</span>
+        Show Compact Notification
+      </button>
     </div>
   </div>
 
@@ -38,6 +42,10 @@
 
     document.getElementById('darkBtn').addEventListener('click', () => {
       window.electronAPI.showDarkNotification();
+    });
+
+    document.getElementById('compactBtn').addEventListener('click', () => {
+      window.electronAPI.showCompactNotification();
     });
   </script>
 </body>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incoming Call - Compact Dark</title>
+  <style>
+    /*
+     * COMPACT DARK MODE NOTIFICATION
+     * ===============================
+     * Minimal notification mimicking native macOS notification size.
+     * Uses same transparent window implementation pattern.
+     *
+     * Dimensions: ~360x100px (close to native macOS notification)
+     * See: TRANSPARENT_WINDOW_GUIDE.md for implementation details
+     */
+
+    html {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      padding: 0;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /**
+     * CRITICAL: Absolute positioning to fill entire window
+     * This is the key to avoiding black borders on transparent windows.
+     * The container fills the window, then flexbox centers content inside.
+     */
+    .notification-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(45, 55, 72, 0.98);
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      animation: slideDown 0.3s ease-out;
+      width: 100%;
+      height: 100%;
+      gap: 12px;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .call-icon {
+      font-size: 32px;
+      animation: pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+      }
+    }
+
+    .call-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .caller-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #f7fafc;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .call-status {
+      font-size: 12px;
+      color: #a0aec0;
+      font-weight: 400;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: white;
+      -webkit-app-region: no-drag;
+      white-space: nowrap;
+    }
+
+    .accept-btn {
+      background: #48bb78;
+      box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+    }
+
+    .accept-btn:hover {
+      background: #38a169;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(72, 187, 120, 0.4);
+    }
+
+    .accept-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(72, 187, 120, 0.3);
+    }
+
+    .decline-btn {
+      background: #f56565;
+      box-shadow: 0 2px 8px rgba(245, 101, 101, 0.3);
+    }
+
+    .decline-btn:hover {
+      background: #e53e3e;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(245, 101, 101, 0.4);
+    }
+
+    .decline-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(245, 101, 101, 0.3);
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-card">
+    <div class="call-icon">☎️</div>
+
+    <div class="call-info">
+      <div class="caller-name">John Doe</div>
+      <div class="call-status">Incoming Call</div>
+    </div>
+
+    <div class="button-group">
+      <button class="accept-btn" onclick="acceptCall()">Accept</button>
+      <button class="decline-btn" onclick="declineCall()">Decline</button>
+    </div>
+  </div>
+
+  <script>
+    function acceptCall() {
+      console.log('Accept button clicked (Compact Dark)');
+      window.electronAPI.acceptCall();
+    }
+
+    function declineCall() {
+      console.log('Decline button clicked (Compact Dark)');
+      window.electronAPI.declineCall();
+    }
+  </script>
+</body>
+</html>
