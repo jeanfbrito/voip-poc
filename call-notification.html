@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incoming Call</title>
+  <style>
+    /*
+     * TRANSPARENT WINDOW IMPLEMENTATION
+     * =================================
+     * This CSS implements the absolute positioning pattern to fix transparent
+     * window rendering issues in Electron. Key principles:
+     *
+     * 1. Body is transparent with overflow hidden
+     * 2. Content container (.notification-card) uses position: absolute
+     * 3. Absolute element fills entire window (top/left/right/bottom: 0)
+     * 4. Content is centered inside the absolute element with flexbox
+     *
+     * This prevents black borders and rendering artifacts that occur when
+     * showing transparent windows before the renderer is fully ready.
+     *
+     * See: TRANSPARENT_WINDOW_GUIDE.md for complete documentation
+     */
+
+    html {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      padding: 0;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /**
+     * CRITICAL: Absolute positioning to fill entire window
+     * This is the key to avoiding black borders on transparent windows.
+     * The container fills the window, then flexbox centers content inside.
+     */
+    .notification-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: slideDown 0.4s ease-out;
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .call-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .call-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+      }
+    }
+
+    .call-status {
+      font-size: 11px;
+      color: #999;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .caller-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 2px;
+    }
+
+    .caller-number {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      -webkit-app-region: no-drag;
+    }
+
+    .accept-btn {
+      background: #34C759;
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4);
+    }
+
+    .accept-btn:hover {
+      background: #30B050;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(52, 199, 89, 0.6);
+    }
+
+    .accept-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(52, 199, 89, 0.4);
+    }
+
+    .decline-btn {
+      background: #FF3B30;
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+    }
+
+    .decline-btn:hover {
+      background: #E63228;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.6);
+    }
+
+    .decline-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.4);
+    }
+
+    .button-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-card">
+    <div class="call-header">
+      <div class="call-icon">☎️</div>
+      <div class="call-status">INCOMING CALL</div>
+      <div class="caller-name">John Doe</div>
+      <div class="caller-number">+1 (555) 123-4567</div>
+    </div>
+
+    <div class="button-group">
+      <button class="accept-btn" onclick="acceptCall()">
+        <div class="button-text">
+          <span>✓</span>
+          <span>Accept</span>
+        </div>
+      </button>
+      <button class="decline-btn" onclick="declineCall()">
+        <div class="button-text">
+          <span>✕</span>
+          <span>Decline</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function acceptCall() {
+      console.log('Accept button clicked');
+      window.electronAPI.acceptCall();
+    }
+
+    function declineCall() {
+      console.log('Decline button clicked');
+      window.electronAPI.declineCall();
+    }
+  </script>
+</body>
+</html>

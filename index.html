@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoIP Notification Comparison</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>VoIP Notification Comparison</h1>
+    <p class="subtitle">Compare Native vs Custom HTML Notifications</p>
+
+    <div class="button-group">
+      <button id="nativeBtn" class="button button-native">
+        <span class="button-icon">📱</span>
+        Show Native Notification
+      </button>
+      <button id="customBtn" class="button button-custom">
+        <span class="button-icon">🎨</span>
+        Show Custom Notification
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('nativeBtn').addEventListener('click', () => {
+      window.electronAPI.showNativeNotification();
+    });
+
+    document.getElementById('customBtn').addEventListener('click', () => {
+      window.electronAPI.showCustomNotification();
+    });
+  </script>
+</body>
+</html>
