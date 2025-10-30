@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   showCustomNotification: () => ipcRenderer.send('show-custom-notification'),
   showDarkNotification: () => ipcRenderer.send('show-dark-notification'),
   showCompactNotification: () => ipcRenderer.send('show-compact-notification'),
+  showAdvancedNotification: () => ipcRenderer.send('show-advanced-notification'),
   acceptCall: () => ipcRenderer.send('accept-call'),
   declineCall: () => ipcRenderer.send('decline-call')
 });

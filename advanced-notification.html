@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced VoIP Notification</title>
+  <style>
+    /*
+     * ADVANCED VOIP NOTIFICATION
+     * ===========================
+     * Rich notification with avatar, caller info, call quality,
+     * and multiple action buttons for voice/video call handling.
+     *
+     * Dimensions: ~500x300px
+     * Uses same transparent window implementation pattern.
+     */
+
+    html {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      padding: 0;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /**
+     * CRITICAL: Absolute positioning to fill entire window
+     * This is the key to avoiding black borders on transparent windows.
+     */
+    .notification-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(45, 55, 72, 0.98) 0%, rgba(30, 35, 50, 0.98) 100%);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      animation: slideDown 0.4s ease-out;
+      width: 100%;
+      height: 100%;
+      gap: 12px;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Top section: Avatar and caller status */
+    .avatar-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(72, 187, 120, 0.3);
+      border: 3px solid rgba(72, 187, 120, 0.5);
+      animation: avatarPulse 2s ease-in-out infinite;
+    }
+
+    .avatar-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes avatarPulse {
+      0%, 100% {
+        box-shadow: 0 8px 24px rgba(72, 187, 120, 0.3);
+        border-color: rgba(72, 187, 120, 0.5);
+      }
+      50% {
+        box-shadow: 0 8px 32px rgba(72, 187, 120, 0.5);
+        border-color: rgba(72, 187, 120, 0.8);
+      }
+    }
+
+    /* Caller info section */
+    .caller-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .caller-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f7fafc;
+      text-align: center;
+    }
+
+    .caller-number {
+      font-size: 13px;
+      color: #cbd5e0;
+      text-align: center;
+    }
+
+    /* Call status and duration */
+    .call-status-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(72, 187, 120, 0.15);
+      border-radius: 8px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #48bb78;
+      animation: statusPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .call-status-text {
+      font-size: 12px;
+      color: #a0aec0;
+      font-weight: 500;
+    }
+
+    .call-duration {
+      font-size: 11px;
+      color: #48bb78;
+      font-weight: 600;
+    }
+
+    /* Quality indicator */
+    .quality-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: rgba(75, 192, 192, 0.15);
+      border-radius: 6px;
+      font-size: 11px;
+      color: #4bc0c0;
+      font-weight: 500;
+    }
+
+    .quality-bars {
+      display: flex;
+      gap: 2px;
+    }
+
+    .quality-bar {
+      width: 3px;
+      height: 8px;
+      background: #4bc0c0;
+      border-radius: 1px;
+    }
+
+    .quality-bar.low {
+      height: 4px;
+      opacity: 0.5;
+    }
+
+    /* Action buttons section */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: white;
+      -webkit-app-region: no-drag;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-voice {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    }
+
+    .btn-voice:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-voice:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(72, 187, 120, 0.3);
+    }
+
+    .btn-video {
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+      box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+    }
+
+    .btn-video:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+    }
+
+    .btn-video:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(66, 153, 225, 0.3);
+    }
+
+    .btn-message {
+      background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+      box-shadow: 0 4px 12px rgba(159, 122, 234, 0.3);
+    }
+
+    .btn-message:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(159, 122, 234, 0.4);
+    }
+
+    .btn-message:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(159, 122, 234, 0.3);
+    }
+
+    .btn-decline {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+      flex-basis: 100%;
+    }
+
+    .btn-decline:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 101, 101, 0.4);
+    }
+
+    .btn-decline:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(245, 101, 101, 0.3);
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-card">
+    <!-- Avatar section -->
+    <div class="avatar-section">
+      <div class="avatar-container">
+        <img src="avatar.png" alt="Caller Avatar">
+      </div>
+    </div>
+
+    <!-- Caller info -->
+    <div class="caller-info">
+      <div class="caller-name">Jean Brito</div>
+      <div class="caller-number">+55 11 98765-4321</div>
+    </div>
+
+    <!-- Call status -->
+    <div class="call-status-wrapper">
+      <div class="status-indicator"></div>
+      <span class="call-status-text">Incoming Call</span>
+      <span class="call-duration" id="duration">0:00</span>
+    </div>
+
+    <!-- Quality indicator -->
+    <div class="quality-indicator">
+      <span>Connection Quality:</span>
+      <div class="quality-bars">
+        <div class="quality-bar"></div>
+        <div class="quality-bar"></div>
+        <div class="quality-bar"></div>
+        <div class="quality-bar low"></div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <button class="btn-voice" onclick="acceptVoiceCall()">
+        <span>📞</span> Voice
+      </button>
+      <button class="btn-video" onclick="acceptVideoCall()">
+        <span>📹</span> Video
+      </button>
+      <button class="btn-message" onclick="sendMessage()">
+        <span>💬</span> Message
+      </button>
+      <button class="btn-decline" onclick="declineCall()">
+        <span>✕</span> Decline
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Call duration timer
+    let seconds = 0;
+    const durationEl = document.getElementById('duration');
+
+    const durationInterval = setInterval(() => {
+      seconds++;
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      durationEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+
+    function acceptVoiceCall() {
+      console.log('Accept Voice Call clicked (Advanced)');
+      clearInterval(durationInterval);
+      window.electronAPI.acceptCall();
+    }
+
+    function acceptVideoCall() {
+      console.log('Accept Video Call clicked (Advanced)');
+      clearInterval(durationInterval);
+      window.electronAPI.acceptCall();
+    }
+
+    function sendMessage() {
+      console.log('Send Message clicked (Advanced)');
+      // Could implement message UI in future
+    }
+
+    function declineCall() {
+      console.log('Decline Call clicked (Advanced)');
+      clearInterval(durationInterval);
+      window.electronAPI.declineCall();
+    }
+  </script>
+</body>
+</html>

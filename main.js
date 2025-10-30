@@ -5,6 +5,7 @@ let mainWindow;
 let customNotificationWindow;
 let darkNotificationWindow;
 let compactNotificationWindow;
+let advancedNotificationWindow;
 
 // Create main window
 function createWindow() {
@@ -207,6 +208,62 @@ function createCompactNotification() {
   });
 }
 
+/**
+ * Create advanced rich notification window
+ * Large size (~500x300px) with avatar, multiple action buttons, and call info
+ */
+function createAdvancedNotification() {
+  // Close previous notification if exists
+  if (advancedNotificationWindow) {
+    advancedNotificationWindow.close();
+  }
+
+  advancedNotificationWindow = new BrowserWindow({
+    width: 500,
+    height: 300,
+    frame: false,        // Remove window frame
+    transparent: true,   // Enable transparency
+    alwaysOnTop: true,   // Always on top of other windows
+    skipTaskbar: true,   // Don't show in dock
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    hasShadow: true,     // Keep shadow for macOS aesthetic
+    show: false,         // CRITICAL: Start hidden
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload-notification.js')
+    }
+  });
+
+  // Position at center-top of primary display
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+  advancedNotificationWindow.setPosition(width / 2 - 250, 40);
+
+  /**
+   * CRITICAL: Use ready-to-show event to wait for renderer initialization
+   * This is the key to avoiding black borders on transparent windows
+   * See: TRANSPARENT_WINDOW_GUIDE.md
+   */
+  advancedNotificationWindow.once('ready-to-show', () => {
+    if (advancedNotificationWindow) {
+      advancedNotificationWindow.show();
+      advancedNotificationWindow.focus();
+    }
+  });
+
+  // Load HTML file AFTER registering ready-to-show handler
+  advancedNotificationWindow.loadFile('advanced-notification.html');
+  advancedNotificationWindow.setAlwaysOnTop(true, 'floating', 1);
+
+  advancedNotificationWindow.on('closed', () => {
+    advancedNotificationWindow = null;
+  });
+}
+
 // Show native macOS notification
 function showNativeNotification() {
   const notification = new Notification({
@@ -257,6 +314,10 @@ ipcMain.on('show-compact-notification', () => {
   createCompactNotification();
 });
 
+ipcMain.on('show-advanced-notification', () => {
+  createAdvancedNotification();
+});
+
 ipcMain.on('accept-call', (event) => {
   console.log('✓ Call accepted');
   if (customNotificationWindow) {
@@ -267,6 +328,9 @@ ipcMain.on('accept-call', (event) => {
   }
   if (compactNotificationWindow) {
     compactNotificationWindow.close();
+  }
+  if (advancedNotificationWindow) {
+    advancedNotificationWindow.close();
   }
 });
 
@@ -280,6 +344,9 @@ ipcMain.on('decline-call', (event) => {
   }
   if (compactNotificationWindow) {
     compactNotificationWindow.close();
+  }
+  if (advancedNotificationWindow) {
+    advancedNotificationWindow.close();
   }
 });
 

@@ -28,6 +28,10 @@
         <span class="button-icon">📬</span>
         Show Compact Notification
       </button>
+      <button id="advancedBtn" class="button button-advanced">
+        <span class="button-icon">⭐</span>
+        Show Advanced Notification
+      </button>
     </div>
   </div>
 
@@ -46,6 +50,10 @@
 
     document.getElementById('compactBtn').addEventListener('click', () => {
       window.electronAPI.showCompactNotification();
+    });
+
+    document.getElementById('advancedBtn').addEventListener('click', () => {
+      window.electronAPI.showAdvancedNotification();
     });
   </script>
 </body>
