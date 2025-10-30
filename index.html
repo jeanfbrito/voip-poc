@@ -20,6 +20,10 @@
         <span class="button-icon">🎨</span>
         Show Custom Notification
       </button>
+      <button id="darkBtn" class="button button-dark">
+        <span class="button-icon">🌙</span>
+        Show Dark Notification
+      </button>
     </div>
   </div>
 
@@ -30,6 +34,10 @@
 
     document.getElementById('customBtn').addEventListener('click', () => {
       window.electronAPI.showCustomNotification();
+    });
+
+    document.getElementById('darkBtn').addEventListener('click', () => {
+      window.electronAPI.showDarkNotification();
     });
   </script>
 </body>

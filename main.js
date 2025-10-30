@@ -3,6 +3,7 @@ const path = require('path');
 
 let mainWindow;
 let customNotificationWindow;
+let darkNotificationWindow;
 
 // Create main window
 function createWindow() {
@@ -93,6 +94,62 @@ function createCustomNotification() {
   });
 }
 
+/**
+ * Create dark mode notification window
+ * Same as custom notification but with dark theme styling
+ */
+function createDarkNotification() {
+  // Close previous notification if exists
+  if (darkNotificationWindow) {
+    darkNotificationWindow.close();
+  }
+
+  darkNotificationWindow = new BrowserWindow({
+    width: 320,
+    height: 200,
+    frame: false,        // Remove window frame
+    transparent: true,   // Enable transparency
+    alwaysOnTop: true,   // Always on top of other windows
+    skipTaskbar: true,   // Don't show in dock
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    hasShadow: true,     // Keep shadow for macOS aesthetic
+    show: false,         // CRITICAL: Start hidden
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload-notification.js')
+    }
+  });
+
+  // Position at top-right of primary display
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+  darkNotificationWindow.setPosition(width - 340, 20);
+
+  /**
+   * CRITICAL: Use ready-to-show event to wait for renderer initialization
+   * This is the key to avoiding black borders on transparent windows
+   * See: TRANSPARENT_WINDOW_GUIDE.md
+   */
+  darkNotificationWindow.once('ready-to-show', () => {
+    if (darkNotificationWindow) {
+      darkNotificationWindow.show();
+      darkNotificationWindow.focus();
+    }
+  });
+
+  // Load HTML file AFTER registering ready-to-show handler
+  darkNotificationWindow.loadFile('dark-notification.html');
+  darkNotificationWindow.setAlwaysOnTop(true, 'floating', 1);
+
+  darkNotificationWindow.on('closed', () => {
+    darkNotificationWindow = null;
+  });
+}
+
 // Show native macOS notification
 function showNativeNotification() {
   const notification = new Notification({
@@ -135,10 +192,17 @@ ipcMain.on('show-custom-notification', () => {
   createCustomNotification();
 });
 
+ipcMain.on('show-dark-notification', () => {
+  createDarkNotification();
+});
+
 ipcMain.on('accept-call', (event) => {
   console.log('✓ Call accepted');
   if (customNotificationWindow) {
     customNotificationWindow.close();
+  }
+  if (darkNotificationWindow) {
+    darkNotificationWindow.close();
   }
 });
 
@@ -146,6 +210,9 @@ ipcMain.on('decline-call', (event) => {
   console.log('✗ Call declined');
   if (customNotificationWindow) {
     customNotificationWindow.close();
+  }
+  if (darkNotificationWindow) {
+    darkNotificationWindow.close();
   }
 });
 
